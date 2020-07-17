@@ -48,7 +48,7 @@ auto piUpdate(double setVal) {
     return static_cast<std::int32_t>(val);
 }
 
-int32_t randomGen(int32_t rndMin, int32_t rndMax) {
+std::int32_t randomGen(std::int32_t rndMin, std::int32_t rndMax) {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> dis(rndMin, rndMax);
@@ -86,16 +86,16 @@ void handleEvents(sf::RenderWindow& window, std::int32_t& setValue) {
 }
 
 auto getNoise() {
-    static int32_t noise = 0;
-    static int32_t noisePeriod = 1;
-    static int32_t ticks = 0;
+    static std::int32_t noise = 0;
+    static std::size_t noisePeriod = 1;
+    static std::size_t ticks = 0;
 
     if(++ticks >= noisePeriod) {
         ticks = 0;
         noise = randomGen(-20, 20);
         //noise = -noise;
 
-        static int32_t cnt = 0;
+        static std::size_t cnt = 0;
         if(++cnt >= 10) {
             cnt = 0;
             ++noisePeriod;
