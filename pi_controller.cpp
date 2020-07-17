@@ -16,6 +16,8 @@ void addDot(DotList& list, std::int32_t yPos) {
 }
 
 void drawLines(sf::RenderWindow& window, const DotList& list, sf::Color color) {
+    auto getY = [](const auto v) { return gameHeight - v * 8 / 10 - 100; };
+
     for(auto it = list.begin(); it != list.end(); std::advance(it, 1)) {
         auto itn = std::next(it, 1);
         if(itn != list.end()) {
@@ -23,8 +25,8 @@ void drawLines(sf::RenderWindow& window, const DotList& list, sf::Color color) {
             auto j = std::distance(list.begin(), itn);
             sf::Vertex line[] =
             {
-                sf::Vertex(sf::Vector2f(gameWidth / 2 - i, *it), color),
-                sf::Vertex(sf::Vector2f(gameWidth / 2 - j, *itn), color)
+                sf::Vertex(sf::Vector2f(gameWidth / 2 - i, getY(*it)), color),
+                sf::Vertex(sf::Vector2f(gameWidth / 2 - j, getY(*itn)), color)
             };
 
             window.draw(line, 2, sf::Lines);
@@ -32,20 +34,25 @@ void drawLines(sf::RenderWindow& window, const DotList& list, sf::Color color) {
     }
 }
 
-auto piUpdate(double setVal) {
-    static double val = setVal;
+std::int32_t process(double control) {
+    // Example transfer function implementing process
+    return static_cast<std::int32_t>(control * 1.47);
+}
+
+auto piUpdate(std::int32_t setVal) {
+    static double controlSignal = 0;
     static double errIntegral = 0;
 
-    auto err = setVal - val;
+    double err = setVal - process(controlSignal);
     errIntegral += err;
 
-    val += err * 0.4f;
-    val += errIntegral * 0.005f;
+    controlSignal += err * 0.4f;
+    controlSignal += errIntegral * 0.005f;
 
-    //val += err * 0.06f;
-    //val += errIntegral * 0.1f;
+    //controlSignal += err * 0.06f;
+    //controlSignal += errIntegral * 0.1f;
 
-    return static_cast<std::int32_t>(val);
+    return process(controlSignal);
 }
 
 std::int32_t randomGen(std::int32_t rndMin, std::int32_t rndMax) {
@@ -67,11 +74,11 @@ void handleEvents(sf::RenderWindow& window, std::int32_t& setValue) {
 
         if(event.type == sf::Event::KeyPressed) {
             if(event.key.code == sf::Keyboard::Num0) {
-                setValue = gameHeight * 3 / 4;
+                setValue = 0;
             } else if(event.key.code == sf::Keyboard::Num1) {
-                setValue = gameHeight * 1 / 4;
+                setValue = 1000;
             } else if(event.key.code == sf::Keyboard::Num5) {
-                setValue = gameHeight * 2 / 4;
+                setValue = 500;
             }
         }
 
@@ -79,7 +86,7 @@ void handleEvents(sf::RenderWindow& window, std::int32_t& setValue) {
         if (event.type == sf::Event::Resized) {
             sf::View view;
             view.setSize(gameWidth, gameHeight);
-            view.setCenter(gameWidth/2.f, gameHeight/2.f);
+            view.setCenter(gameWidth / 2.f, gameHeight / 2.f);
             window.setView(view);
         }
     }
@@ -126,7 +133,7 @@ int main()
             sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
-    std::int32_t setValue = gameHeight * 3 / 4;
+    std::int32_t setValue = 0;
 
     DotList setList;
     DotList piList;
