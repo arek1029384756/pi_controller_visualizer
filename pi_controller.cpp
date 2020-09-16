@@ -147,8 +147,9 @@ int main()
         if(clock.getElapsedTime() >= updateTime) {
             clock.restart();
             updateValues(setList, piList, setValue);
-            updateWindow(window, setList, piList);
         }
+
+        updateWindow(window, setList, piList);
     }
 
     return EXIT_SUCCESS;
