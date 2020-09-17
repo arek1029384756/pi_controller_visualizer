@@ -127,10 +127,12 @@ void updateWindow(sf::RenderWindow& window, const DotList& setList, const DotLis
     window.display();
 }
 
-int main()
-{
+int main() {
+    sf::ContextSettings settings;
+    settings.antialiasingLevel = 0;
+
     sf::RenderWindow window(sf::VideoMode(gameWidth, gameHeight, 32), "PI Controller Simulator",
-            sf::Style::Titlebar | sf::Style::Close);
+            sf::Style::Default, settings);
     window.setVerticalSyncEnabled(true);
 
     std::int32_t setValue = 0;
